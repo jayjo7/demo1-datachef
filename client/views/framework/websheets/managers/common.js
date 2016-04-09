@@ -291,7 +291,7 @@ Template.registerHelper('getSettingsArray', function(key)
 	//console.log('getSettingsArray:key = ' + key)
 	var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
 
-	var Settings = Content.findOne({$and : [{Key: key}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]})
+	var Settings = Settings.findOne({$and : [{Key: key}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]})
 
 
 
@@ -309,7 +309,7 @@ Template.registerHelper('getSettingsArray', function(key)
 Template.registerHelper('getSettingsMulti', function(key)
 {
 	var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
-
+    console.log('getSettingsMulti:orgname= ' + orgname)
 	console.log('getSettingsMulti:key = ' + key)
 	var result = Settings.find({$and : [{Key: key}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]},{sort:{sheetRowId: 1}});
 	console.log('getSettingsMulti:Value = ' + result.Value)
