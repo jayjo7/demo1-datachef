@@ -51,15 +51,15 @@ var buildParamsObject = function(doc)
 {
   var params =
   {
-      op  :   websheetsprintOperation(doc.orgname),
-      unm :   websheetsprintUserName(doc.orgname),
-      dno :   websheetsprintDeviceName(doc.orgname),
-      key :   websheetsprintApiKey(doc.orgname),
-      mode :  websheetsprintMode(doc.orgname),
-      msgno :   doc.OrderNumber,
-      content :   buildContentString(doc)
+      op      : websheetsprintOperation(doc.orgname),
+      unm     : websheetsprintUserName(doc.orgname),
+      dno     : websheetsprintDeviceName(doc.orgname),
+      key     : websheetsprintApiKey(doc.orgname),
+      mode    : websheetsprintMode(doc.orgname),
+      msgno   : doc.OrderNumber,
+      content : buildContentString(doc)
   }
-  console.log("buildParamsObject : params: " +JSON.stringify(params, null, 4));
+  console.log(doc.sessionId  + ": buildParamsObject : params: " +JSON.stringify(params, null, 4));
 
 
   return params;
@@ -89,7 +89,7 @@ var buildContentString =function(doc)
 
   var diffWithFontSevenSize = fontSevenCharCount - orgnameLength;
 
-  console.log( "diffWithFontSevenSize   : " + diffWithFontSevenSize);
+  console.log(doc.sessionId + ": buildContentString : diffWithFontSevenSize   : " + diffWithFontSevenSize);
 
   if(diffWithFontSevenSize == 0)
   {
@@ -116,6 +116,7 @@ var buildContentString =function(doc)
       }
        content = content+doc.orgname.toUpperCase();
   }
+  console.log(doc.sessionId + ": buildContentString : content (partial)  : " + content);
 
 
   var content = content + "|5********************************" ;
@@ -124,7 +125,7 @@ var buildContentString =function(doc)
   var content = content + "|5  " ;
   for (key in doc.itemsObject)
   {
-      console.log( "Key   : " + key);
+      console.log(doc.sessionId +  ": buildContentString : Key   : " + key);
 
       var item = doc.itemsObject[key];
       var content = content + "|5 " ; 
@@ -208,7 +209,7 @@ var buildContentString =function(doc)
 
   var content  = content + "|5********** Thank you! **********";
 
-  console.log("buildContentString : content: " + content);
+  console.log(doc.sessionId +  ":buildContentString : content: " + content);
 
   return content
 

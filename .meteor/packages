@@ -21,9 +21,15 @@ standard-minifier-css
 standard-minifier-js
 
 ## Added by datachef
+dispatch:phoneformat.js
+dandv:http-more
+gfk:mailgun-api
 iron:router
+matb33:collection-hooks
+momentjs:moment
 nimble:restivus
 npm-container
-matb33:collection-hooks
+okgrow:router-autoscroll
+twbs:bootstrap
 u2622:persistent-session
 underscorestring:underscore.string

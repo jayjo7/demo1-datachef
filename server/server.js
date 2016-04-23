@@ -68,9 +68,9 @@ Meteor.methods({
 
 					cartItem.totalPrice = cartItem.Price * cartItem.qty;
 
-					console.log(cartItem.session+ ': addToCart:totalPrice = ' + cartItem.totalPrice);
+					console.log(cartItem.session + ': addToCart: totalPrice = ' + cartItem.totalPrice);
 
-					console.log(cartItem.session + ': cartId = '+ cartItem.cartId);
+					console.log(cartItem.session + ': addToCart: cartId = '+ cartItem.cartId);
 
 					CartItems.update({_id:cartItem.cartId, product:cartItem.product, session:cartItem.session}, cartItem ,{upsert:true});
 
@@ -559,12 +559,14 @@ OrdersMeta.after.insert(function (userId, doc) {
 
     //Start Sending to the Websheets 
 	try{
+			console.log(doc.sessionId + ": Posting to sheets in mandatory.");
 	  		var count = 0;
 	  		processStatus.websheets.status 	= websheets.public.status.SUCCESS;
 	  		var response;
 	  		do
 	  		{
 	  			count +=1;
+	  			console.log(doc.sessionId + ": posting to sheets...")
 	  			response = Meteor.call('postWebsheets', doc);
 	  			console.log(doc.sessionId + ": insert (new order) attempted count = " + count );
 	  		}while (count < websheets.private.generic.WEBSHEETS_MAX_RETRY && response.statusCode !== 200)
@@ -597,6 +599,7 @@ OrdersMeta.after.insert(function (userId, doc) {
     //Start Sending to Printer
     if( isPrinterEnabled(doc.orgname))
     {
+    	console.log(doc.sessionId + ": Printer is enabled.");
 		try{
 		  		var count = 0;
 		  		processStatus.printer.status 	= websheets.public.status.SUCCESS;
@@ -604,9 +607,10 @@ OrdersMeta.after.insert(function (userId, doc) {
 		  		do
 		  		{
 		  			count +=1;
+		  			console.log(doc.sessionId + ": Printing...")
 		  			response = Meteor.call('postWebsheetsPrint', doc);
 		  			console.log(doc.sessionId + ": Posting to Printer server (new order) attempted count = " + count );
-		  		}while (count < websheets.private.generic.WEBSHEETS_MAX_RETRY && response.statusCode !== 200)
+		  		}while (count < websheets.private.generic.PRINTER_MAX_RETRY && response.statusCode !== 200)
 
 		  		if(response.statusCode !== 200)
 		  		{
