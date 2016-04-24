@@ -485,7 +485,7 @@ Meteor.methods({
 
       var gmtOffsetValue = gmtOffset(orgname);
       console.log('getLocalTime: gmtOffsetValue  = ' + gmtOffsetValue) ;
-      var localTimeObject = moment().utcOffset(gmtOffsetValue)
+      var localTimeObject = moment().utcOffset(Number(gmtOffsetValue));
       console.log('getLocalTime: localTimeObject  = ' + localTimeObject) ;
       var localTime = localTimeObject.format('MM/DD/YYYY hh:mm:ss A');
       console.log('getLocalTime: localTime  = ' + localTime) ;
