@@ -173,9 +173,51 @@ Template.homePage.helpers({
 
     isStoreClosed: function()
     {
+        var result = true;
+        var orgname     = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
+        var momentDate  = moment().utcOffset(Number(gmtOffset(orgname)));
+        var currentDay  = moment().format("dddd").toString();
+        //var currentTime = momentDate.hour();
+        //console.log('currentDay  = ' + currentDay);
+        //console.log('currentTime = ' + currentTime);
 
-        var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
+        var workHours = WorkHours.find({$and : [{Day: currentDay}, {orgname:orgname}, {OpenTime : {"$exists" : true, "$ne" : 0}}, {CloseTime : {"$exists" : true, "$ne" : 0}}]},{sort:{sheetRowId: 1}}).fetch();
+        //console.log('workHours length = ' + workHours.length);
+        for(var key in workHours)
+        {
+            //console.log('OpenTime  = ' + workHours[key].OpenTime);
+            //console.log('CloseTime = ' + workHours[key].CloseTime);
+            var momentTimeOpen  = moment().utcOffset(Number(gmtOffset(orgname))).hour(workHours[key].OpenTime).minute(0).second(0);
+            var momentTimeClose = moment().utcOffset(Number(gmtOffset(orgname))).hour(workHours[key].CloseTime).minute(0).second(0);
+            if (!Number.isInteger(workHours[key].OpenTime))
+            {
+                var minutesOpen = workHours[key].OpenTime % 1;
+                minutesOpen = Math.floor(minutesOpen * 100);
+                //console.log('minutesOpen  = ' + minutesOpen);
+                momentTimeOpen.minute(minutesOpen);
+            }
+            if (!Number.isInteger(workHours[key].CloseTime))
+            {
+                var minutesClose = workHours[key].CloseTime % 1;
+                minutesClose = Math.floor(minutesClose * 100);
+                //console.log('minutesClose  = ' + minutesClose);
+                momentTimeClose.minute(minutesClose);
+            }
 
+
+            //console.log('momentTimeOpen  = ' + momentTimeOpen.format("dddd, MMMM Do YYYY, h:mm:ss A"));
+            //console.log('momentTimeClose = ' + momentTimeClose.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+            if(momentDate.isAfter(momentTimeOpen, "minutes") && momentDate.isBefore(momentTimeClose, "minutes"))
+            {
+                result = false;
+                break;
+            }
+
+        }
+        return result;
+
+
+/**
         var store_open_time= Settings.findOne({$and : [{Key: "store_open_time"}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]});
         var store_close_time= Settings.findOne({$and : [{Key: "store_close_time"}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]});
 
@@ -225,6 +267,7 @@ Template.homePage.helpers({
 
                 return true;
             }
+**/            
 
     },
 

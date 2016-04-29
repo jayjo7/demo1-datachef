@@ -1,3 +1,48 @@
+Template.registerHelper('getHours', function(whatDay)
+{       
+		var hours="";
+		var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
+//Sunday		
+		var workHours = WorkHours.find({$and : [{Day: whatDay}, {orgname:orgname}, {OpenTime : {"$exists" : true, "$ne" : 0}}, {CloseTime : {"$exists" : true, "$ne" : 0}}]},{sort:{OpenTime: 1}}).fetch();
+        //console.log('workHours length = ' + workHours.length);
+        if( workHours.length > 0)
+        {	
+	        for(var key in workHours)
+	        {
+	            //console.log('OpenTime  = ' + workHours[key].OpenTime);
+	            //console.log('CloseTime = ' + workHours[key].CloseTime);
+	            var momentTimeOpen  = moment().utcOffset(Number(gmtOffset(orgname))).hour(workHours[key].OpenTime).minute(0).second(0);
+	            var momentTimeClose = moment().utcOffset(Number(gmtOffset(orgname))).hour(workHours[key].CloseTime).minute(0).second(0);
+	            if (!Number.isInteger(workHours[key].OpenTime))
+	            {
+	                var minutesOpen = workHours[key].OpenTime % 1;
+	                minutesOpen = Math.floor(minutesOpen * 100);
+	                //console.log('minutesOpen  = ' + minutesOpen);
+	                momentTimeOpen.minute(minutesOpen);
+	            }
+	            if (!Number.isInteger(workHours[key].CloseTime))
+	            {
+	                var minutesClose = workHours[key].CloseTime % 1;
+	                minutesClose = Math.floor(minutesClose * 100);
+	                //console.log('minutesClose  = ' + minutesClose);
+	                momentTimeClose.minute(minutesClose);
+	            }
+
+	           // hours +=  " "+ workHours[key].OpenTime + "-" + workHours[key].CloseTime;
+	            hours +=  " "+ momentTimeOpen.format('h:mm A')+ "-" + momentTimeClose.format('h:mm A');
+
+	        }
+	    }
+	    else
+	    {
+	    	hours = " Closed"  ;
+
+	    }
+
+	    return hours;
+
+});    
+
 Template.registerHelper('isMultiPriceItemInSession', function()
 {
 		var menu    = Session.get(websheets.public.generic.MENU_OBJECT_SESSION_KEY);
@@ -112,12 +157,12 @@ Template.registerHelper('getSelectedSpiceLevel', function(cartItem)
 Template.registerHelper('hasValue', function(key)
 {
 	var menu = Session.get(websheets.public.generic.MENU_OBJECT_SESSION_KEY);
-	console.log('hasValue: menu      = '  + menu);
-	console.log('hasValue: given key =' + key);
+	//console.log('hasValue: menu      = '  + menu);
+	//console.log('hasValue: given key =' + key);
 	var value = menu[key];
-	console.log('hasValue: value = ' + value);
+	//console.log('hasValue: value = ' + value);
 	//value = value.trim();
-	console.log('hasValue: value = ' + value);
+	//console.log('hasValue: value = ' + value);
 
 	if(value)
 	{
@@ -133,7 +178,7 @@ Template.registerHelper('hasValue', function(key)
 Template.registerHelper('menu',function(categoryMenu)
 {
     var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
-    console.log('menu: ' + orgname);
+    //console.log('menu: ' + orgname);
     //console.log('isItemCodeEnabled: ' + isItemCodeEnabled(orgname);
 
     if('ENABLED' === Meteor.settings.public[orgname].itemCode.toUpperCase())
@@ -269,7 +314,7 @@ Template.registerHelper('getOrders', function(StatusCode)
 {
 	var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
 
-	console.log('getOrders:StatusCode = ' +StatusCode);
+	//console.log('getOrders:StatusCode = ' +StatusCode);
 	return  Orders.find({orgname:orgname,StatusCode: StatusCode});
 
 });
@@ -309,10 +354,10 @@ Template.registerHelper('getSettingsArray', function(key)
 Template.registerHelper('getSettingsMulti', function(key)
 {
 	var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
-    console.log('getSettingsMulti:orgname= ' + orgname)
-	console.log('getSettingsMulti:key = ' + key)
+    //console.log('getSettingsMulti:orgname= ' + orgname)
+	//console.log('getSettingsMulti:key = ' + key)
 	var result = Settings.find({$and : [{Key: key}, {orgname:orgname}, {Value : {"$exists" : true, "$ne" : ""}}]},{sort:{sheetRowId: 1}});
-	console.log('getSettingsMulti:Value = ' + result.Value)
+	//console.log('getSettingsMulti:Value = ' + result.Value)
 
 	return result
 });
@@ -504,7 +549,7 @@ Template.registerHelper('isPaymentEnabled', function(){
 
 	    var orgname = Session.get(websheets.public.generic.ORG_NAME_SESSION_KEY);
 
-	    console.log('Meteor.settings.public[orgname].onlinePayment = ' + Meteor.settings.public[orgname].onlinePayment);
+	    //console.log('Meteor.settings.public[orgname].onlinePayment = ' + Meteor.settings.public[orgname].onlinePayment);
 
 	    if('enabled' === Meteor.settings.public[orgname].onlinePayment)
 	    {
@@ -529,7 +574,7 @@ Template.registerHelper('imageFormatter', function(){
 
 validData = function(input)
 {
-	console.log("validData:input = " + input);
+	//console.log("validData:input = " + input);
 
 	if(input)
 	{

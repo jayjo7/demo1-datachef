@@ -12,13 +12,13 @@ Meteor.startup(function() {
         if(appUUID)
         {
 
-            console.log(appUUID + ":Startup: appUUID from the session = " + appUUID);
+            console.log(appUUID + ": Startup: appUUID from the session = " + appUUID);
 
         }
         else
         {
         	Session.setPersistent('appUUID', Meteor.uuid());
-        	console.log(appUUID + ":Startup: New appUUID stored in local storage = " + Session.get('appUUID'));
+        	console.log(appUUID + ": Startup: New appUUID stored in local storage = " + Session.get('appUUID'));
 
         }
 
